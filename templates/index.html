@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Text Translator</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #dff6ff, #eef2ff);
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 25px;
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #087f9c;
+            margin-bottom: 35px;
+        }
+
+        h2 {
+            color: #087f9c;
+            margin-top: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 15px;
+        }
+
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+        }
+
+        .language-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .language-box {
+            width: 50%;
+        }
+
+        button {
+            background: #087f9c;
+            color: white;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #065f75;
+        }
+
+        .read-button {
+            background: #555;
+            margin-left: 8px;
+        }
+
+        .read-button:hover {
+            background: #333;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f2fbfd;
+            border-left: 5px solid #087f9c;
+            border-radius: 8px;
+        }
+
+        .result h3 {
+            color: #087f9c;
+            margin-top: 0;
+        }
+
+        .result-text {
+            font-size: 16px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .csv-section {
+            margin-top: 45px;
+            padding-top: 25px;
+            border-top: 2px solid #e5e5e5;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px dashed #087f9c;
+            border-radius: 8px;
+            background: #f8fdff;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 22px;
+                margin-top: 80px;
+            }
+
+            .language-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .language-box {
+                width: 100%;
+            }
+
+            .logo {
+                width: 65px;
+                height: 65px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Nobeth Analytics Logo -->
+    <img src="{{ url_for('static', filename='nobeth_logo.jpg') }}"
+         class="logo"
+         alt="Nobeth Analytics Logo">
+
+
+    <div class="container">
+
+        <h1>AI Text Translator</h1>
+
+
+        <!-- ================= TEXT TRANSLATION ================= -->
+
+        <h2>Text Translation</h2>
+
+        <form action="/translate" method="POST">
+
+            <label>Enter Text</label>
+
+            <textarea
+                name="text"
+                placeholder="Enter your text here..."
+                required>{{ text or "" }}</textarea>
+
+
+            <div class="language-row">
+
+                <div class="language-box">
+
+                    <label>From Language</label>
+
+                    <select name="from_language">
+
+                        <option value="English"
+                            {% if from_language == "English" %}selected{% endif %}>
+                            English
+                        </option>
+
+                        <option value="Tamil"
+                            {% if from_language == "Tamil" %}selected{% endif %}>
+                            Tamil
+                        </option>
+
+                        <option value="Hindi"
+                            {% if from_language == "Hindi" %}selected{% endif %}>
+                            Hindi
+                        </option>
+
+                        <option value="Malayalam"
+                            {% if from_language == "Malayalam" %}selected{% endif %}>
+                            Malayalam
+                        </option>
+
+                        <option value="Telugu"
+                            {% if from_language == "Telugu" %}selected{% endif %}>
+                            Telugu
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="language-box">
+
+                    <label>To Language</label>
+
+                    <select name="to_language">
+
+                        <option value="Tamil"
+                            {% if to_language == "Tamil" %}selected{% endif %}>
+                            Tamil
+                        </option>
+
+                        <option value="English"
+                            {% if to_language == "English" %}selected{% endif %}>
+                            English
+                        </option>
+
+                        <option value="Hindi"
+                            {% if to_language == "Hindi" %}selected{% endif %}>
+                            Hindi
+                        </option>
+
+                        <option value="Malayalam"
+                            {% if to_language == "Malayalam" %}selected{% endif %}>
+                            Malayalam
+                        </option>
+
+                        <option value="Telugu"
+                            {% if to_language == "Telugu" %}selected{% endif %}>
+                            Telugu
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <button type="submit">
+                Translate
+            </button>
+
+        </form>
+
+
+        {% if translation %}
+
+        <div class="result">
+
+            <h3>Translation Result</h3>
+
+            <p class="result-text" id="translationText">{{ translation }}</p>
+
+            <button
+                type="button"
+                class="read-button"
+                onclick="readText('translationText', '{{ to_language }}')">
+                🔊 Read Text
+            </button>
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- ================= CSV SECTION ================= -->
+
+        <div class="csv-section">
+
+            <h2>CSV File Translation & Summarization</h2>
+
+            <p>
+                Upload a CSV file to summarize its content and translate the
+                information into your selected language.
+            </p>
+
+
+            <form action="/csv-process"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+                <label>Upload your CSV file</label>
+
+                <input
+                    type="file"
+                    name="csv_file"
+                    accept=".csv"
+                    required>
+
+
+                <label>Translate CSV To</label>
+
+                <select name="csv_language">
+
+                    <option value="English">English</option>
+                    <option value="Tamil">Tamil</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Malayalam">Malayalam</option>
+                    <option value="Telugu">Telugu</option>
+
+                </select>
+
+
+                <button type="submit">
+                    Process CSV
+                </button>
+
+            </form>
+
+
+            {% if csv_summary %}
+
+            <div class="result">
+
+                <h3>CSV Summary</h3>
+
+                <p class="result-text" id="csvSummary">
+                    {{ csv_summary }}
+                </p>
+
+                <button
+                    type="button"
+                    class="read-button"
+                    onclick="readText('csvSummary', '{{ csv_language }}')">
+                    🔊 Read Summary
+                </button>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if csv_translation %}
+
+            <div class="result">
+
+                <h3>CSV Translation</h3>
+
+                <p class="result-text" id="csvTranslation">
+                    {{ csv_translation }}
+                </p>
+
+                <button
+                    type="button"
+                    class="read-button"
+                    onclick="readText('csvTranslation', '{{ csv_language }}')">
+                    🔊 Read Translation
+                </button>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if download_file %}
+
+            <a href="{{ url_for('download_file', filename=download_file) }}"
+               download>
+
+                <button type="button">
+                    Download Translated CSV
+                </button>
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= TEXT TO SPEECH ================= -->
+
+    <script>
+
+        function readText(elementId, language) {
+
+            const element = document.getElementById(elementId);
+
+            if (!element) {
+                return;
+            }
+
+            const text = element.innerText.trim();
+
+            if (!text) {
+                alert("No text available to read.");
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+
+            const speech = new SpeechSynthesisUtterance(text);
+
+            const languageCodes = {
+                "English": "en-US",
+                "Tamil": "ta-IN",
+                "Hindi": "hi-IN",
+                "Malayalam": "ml-IN",
+                "Telugu": "te-IN"
+            };
+
+            speech.lang = languageCodes[language] || "en-US";
+
+            speech.rate = 0.9;
+            speech.pitch = 1;
+
+            const voices = window.speechSynthesis.getVoices();
+
+            const matchingVoice = voices.find(
+                voice => voice.lang.toLowerCase() === speech.lang.toLowerCase()
+            );
+
+            if (matchingVoice) {
+                speech.voice = matchingVoice;
+            }
+
+            window.speechSynthesis.speak(speech);
+        }
+
+
+        window.speechSynthesis.onvoiceschanged = function () {
+            window.speechSynthesis.getVoices();
+        };
+
+    </script>
+
+</body>
+
+</html>
